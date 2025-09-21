@@ -32,7 +32,7 @@ public class Product {
     private String name;
 
     @Column(nullable = false, length = 4)
-    private String product_key;
+    private String productKey;
 
     @Column(nullable = false)
     private LocalDateTime createDate;
@@ -46,8 +46,8 @@ public class Product {
 
     @PostPersist
     public void generateProductId() {
-        if (this.product_key != null && this.id != null) {
-            this.productId = product_key + id;
+        if (this.productKey != null && this.id != null) {
+            this.productId = productKey + id;
         }
     }
 }
