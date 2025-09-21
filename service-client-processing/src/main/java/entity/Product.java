@@ -31,13 +31,12 @@ public class Product {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(nullable = false, length = 10)
-    private String key;
+    @Column(nullable = false, length = 4)
+    private String product_key;
 
     @Column(nullable = false)
     private LocalDateTime createDate;
-
-    @Column(nullable = false, unique = true)
+    
     private String productId;
 
     @PrePersist
@@ -47,8 +46,8 @@ public class Product {
 
     @PostPersist
     public void generateProductId() {
-        if (this.key != null && this.id != null) {
-            this.productId = key + id;
+        if (this.product_key != null && this.id != null) {
+            this.productId = product_key + id;
         }
     }
 }
