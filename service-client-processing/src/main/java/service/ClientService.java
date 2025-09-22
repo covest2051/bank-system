@@ -1,6 +1,6 @@
 package service;
 
-import dto.ClientCreateRequestDto;
+import dto.ClientRequestDto;
 import dto.ClientResponseDto;
 import entity.Client;
 
@@ -8,6 +8,5 @@ import java.util.List;
 
 public interface ClientService {
     List<Client> registerClients(List<Client> clients);
-
-    ClientResponseDto registerClient(ClientCreateRequestDto clientForRegistration);
+    ClientResponseDto registerClient(ClientRequestDto clientForRegistration);
 }

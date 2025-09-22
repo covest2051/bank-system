@@ -1,9 +1,11 @@
 package service.impl;
 
-import dto.ClientCreateRequestDto;
+import dto.ClientRequestDto;
 import dto.ClientResponseDto;
+import dto.ProductResponseDto;
 import entity.Client;
 import entity.DocumentType;
+import entity.Product;
 import entity.User;
 import exception.BlacklistedException;
 import exception.ClientAlreadyExistsException;
@@ -35,9 +37,9 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public ClientResponseDto registerClient(ClientCreateRequestDto clientForRegistration) {
-        DocumentType docType = clientForRegistration.getDocumentType();
-        String docId = String.valueOf(clientForRegistration.getDocumentId());
+    public ClientResponseDto registerClient(ClientRequestDto req) {
+        DocumentType docType = req.getDocumentType();
+        String docId = String.valueOf(req.getDocumentId());
 
         boolean blacklisted = blacklistRegistryRepository.existsActiveByDocumentTypeAndDocumentId(String.valueOf(docType), docId);
         if (blacklisted) {
@@ -49,37 +51,41 @@ public class ClientServiceImpl implements ClientService {
         }
 
         Client clientForSave = Client.builder()
-                .firstName(clientForRegistration.getFirstName())
-                .middleName(clientForRegistration.getMiddleName())
-                .lastName(clientForRegistration.getLastName())
-                .dateOfBirth(clientForRegistration.getDateOfBirth())
+                .firstName(req.getFirstName())
+                .middleName(req.getMiddleName())
+                .lastName(req.getLastName())
+                .dateOfBirth(req.getDateOfBirth())
                 .documentType(DocumentType.valueOf(String.valueOf(docType)))
-                .documentId(clientForRegistration.getDocumentId())
+                .documentId(req.getDocumentId())
                 .build();
 
         Client savedClient = clientRepository.save(clientForSave);
 
-        userRepository.findByEmail(clientForRegistration.getEmail()).ifPresent(u -> {
+        userRepository.findByEmail(req.getEmail()).ifPresent(u -> {
             throw new ClientAlreadyExistsException("User with this email already exists");
         });
 
         User user = User.builder()
-                .login(clientForRegistration.getEmail())
-                .email(clientForRegistration.getEmail())
-                .password(passwordEncoder.encode(clientForRegistration.getPassword()))
+                .login(req.getEmail())
+                .email(req.getEmail())
+                .password(passwordEncoder.encode(req.getPassword()))
                 .build();
         User savedUser = userRepository.save(user);
 
         savedClient.setUserId(savedUser.getId());
         clientRepository.save(savedClient);
 
+        return mapToClientResponse(savedClient);
+    }
+
+    private ClientResponseDto mapToClientResponse(Client c) {
         return ClientResponseDto.builder()
-                .id(savedClient.getId())
-                .firstName(savedClient.getFirstName())
-                .lastName(savedClient.getLastName())
-                .documentType(String.valueOf(docType))
-                .documentId(savedClient.getDocumentId())
-                .userId(savedClient.getUserId())
+                .id(c.getId())
+                .firstName(c.getFirstName())
+                .lastName(c.getLastName())
+                .documentType(String.valueOf(c))
+                .documentId(c.getDocumentId())
+                .userId(c.getUserId())
                 .build();
     }
 }

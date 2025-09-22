@@ -9,11 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/clients")
 public class ClientController {
-    private final ClientDTO clientDTO;
     private final ClientValidator clientValidator;
     private final ClientService clientService;
 
-    public ClientController(ClientDTO clientDAO, ClientValidator clientValidator, ClientService clientService) {
+    public ClientController(ClientValidator clientValidator, ClientService clientService) {
         this.clientDTO = clientDAO;
         this.clientValidator = clientValidator;
         this.clientService = clientService;

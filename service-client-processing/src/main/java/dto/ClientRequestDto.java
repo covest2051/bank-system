@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,8 +19,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ClientCreateRequestDto {
-
+public class ClientRequestDto {
     @NotBlank
     private String firstName;
 
@@ -32,7 +32,7 @@ public class ClientCreateRequestDto {
     @Past
     private LocalDate dateOfBirth;
 
-    @NotBlank
+    @NotNull
     private DocumentType documentType;
 
     @NotBlank
@@ -43,5 +43,6 @@ public class ClientCreateRequestDto {
     private String email;
 
     @NotBlank
+    @Size(min=8)
     private String password;
 }
