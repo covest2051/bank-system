@@ -1,5 +1,6 @@
 package service.impl;
 
+import dto.ClientEventDto;
 import dto.ClientRequestDto;
 import dto.ClientResponseDto;
 import entity.Client;
@@ -105,8 +106,15 @@ public class ClientServiceImpl implements ClientService {
     private void sendEvent(Client c) {
         String topic = TOPIC_CLIENT_CARDS;
 
+        ClientEventDto event = ClientEventDto.builder()
+                .eventType("CREATE_CARD_REQUEST")
+                .clientId(c.getId())
+                .firstName(c.getFirstName())
+                .lastName(c.getLastName())
+                .build();
+
         try {
-            kafkaTemplate.send(topic, String.valueOf(c.getId()), c);
+            kafkaTemplate.send(topic, String.valueOf(c.getId()), event);
             log.info("Sent event to topic {} for clientId={}, op={}", topic, c.getClientId(), "CREATE_CARD_REQUEST");
         } catch (Exception e) {
             log.error("Failed to send event to topic {} for clientId={}, op={}: {}", topic, c.getClientId(), "CREATE_CARD_REQUEST", e.getMessage());

@@ -3,6 +3,7 @@ package service.impl;
 import dto.ProductRequestDto;
 import dto.ProductResponseDto;
 import entity.Product;
+import entity.ProductType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class ProductServiceImpl implements ProductService {
         Product productForSave = Product.builder()
                 .name(req.getName())
                 .createDate(req.getCreateDate())
-                .productKey(req.getProductKey())
+                .productKey(ProductType.valueOf(req.getProductKey()))
                 .productId(req.getProductId())
                 .build();
 
@@ -68,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
         return ProductResponseDto.builder()
                 .id(p.getId())
                 .name(p.getName())
-                .productKey(p.getProductKey())
+                .productKey(String.valueOf(p.getProductKey()))
                 .createDate(p.getCreateDate())
                 .productId(p.getProductId())
                 .build();
