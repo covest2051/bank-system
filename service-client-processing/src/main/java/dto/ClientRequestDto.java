@@ -1,5 +1,6 @@
 package dto;
 
+import entity.Client;
 import entity.DocumentType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -45,4 +46,15 @@ public class ClientRequestDto {
     @NotBlank
     @Size(min=8)
     private String password;
+
+    public static ClientRequestDto mapClientToDto(Client client) {
+        return new ClientRequestDto().builder()
+                .firstName(client.getFirstName())
+                .middleName(client.getMiddleName())
+                .lastName(client.getLastName())
+                .dateOfBirth(client.getDateOfBirth())
+                .documentType(client.getDocumentType())
+                .documentId(client.getDocumentId())
+                .build();
+    }
 }

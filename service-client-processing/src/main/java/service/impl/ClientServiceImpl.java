@@ -2,10 +2,8 @@ package service.impl;
 
 import dto.ClientRequestDto;
 import dto.ClientResponseDto;
-import dto.ProductResponseDto;
 import entity.Client;
 import entity.DocumentType;
-import entity.Product;
 import entity.User;
 import exception.BlacklistedException;
 import exception.ClientAlreadyExistsException;
@@ -13,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import repository.BlacklistRegistryRepository;
 import repository.ClientRepository;
 import repository.UserRepository;
@@ -20,10 +19,12 @@ import service.ClientService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
@@ -32,8 +33,13 @@ public class ClientServiceImpl implements ClientService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public List<Client> registerClients(List<Client> clients) {
-        return null;
+    public List<ClientResponseDto> registerClients(List<Client> clients) {
+        return clients.stream()
+                .map(client -> {
+                    ClientRequestDto clientRequestDto = ClientRequestDto.mapClientToDto(client);
+                    return registerClient(clientRequestDto);
+        })
+        .collect(Collectors.toList());
     }
 
     @Override
@@ -45,7 +51,7 @@ public class ClientServiceImpl implements ClientService {
         if (blacklisted) {
             throw new BlacklistedException("Client with document " + docType + ":" + docId + " is in black list");
         }
-        Optional<Client> existingClientOpt = clientRepository.findByDocumentTypeAndDocumentId(String.valueOf(docType), docId);
+        Optional<Client> existingClientOpt = clientRepository.findByDocumentTypeAndDocumentId(docType, docId);
         if (existingClientOpt.isPresent()) {
             throw new ClientAlreadyExistsException("Client is already registered");
         }
@@ -83,7 +89,7 @@ public class ClientServiceImpl implements ClientService {
                 .id(c.getId())
                 .firstName(c.getFirstName())
                 .lastName(c.getLastName())
-                .documentType(String.valueOf(c))
+                .documentType(String.valueOf(c.getDocumentType()))
                 .documentId(c.getDocumentId())
                 .userId(c.getUserId())
                 .build();
