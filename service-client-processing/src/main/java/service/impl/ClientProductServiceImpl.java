@@ -13,7 +13,6 @@ import repository.ClientProductRepository;
 import repository.ProductRepository;
 import service.ClientProductService;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service

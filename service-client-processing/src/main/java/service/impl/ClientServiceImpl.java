@@ -9,6 +9,7 @@ import exception.BlacklistedException;
 import exception.ClientAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class ClientServiceImpl implements ClientService {
+    private static final String TOPIC_CLIENT_CARDS = "client_cards";
 
+    private final KafkaTemplate<String, Object> kafkaTemplate;
     private final ClientRepository clientRepository;
     private final UserRepository userRepository;
     private final BlacklistRegistryRepository blacklistRegistryRepository;
@@ -84,6 +87,10 @@ public class ClientServiceImpl implements ClientService {
         return mapToClientResponse(savedClient);
     }
 
+    public void createCardForClient(Client c) {
+        sendEvent(c);
+    }
+
     private ClientResponseDto mapToClientResponse(Client c) {
         return ClientResponseDto.builder()
                 .id(c.getId())
@@ -93,5 +100,16 @@ public class ClientServiceImpl implements ClientService {
                 .documentId(c.getDocumentId())
                 .userId(c.getUserId())
                 .build();
+    }
+
+    private void sendEvent(Client c) {
+        String topic = TOPIC_CLIENT_CARDS;
+
+        try {
+            kafkaTemplate.send(topic, String.valueOf(c.getId()), c);
+            log.info("Sent event to topic {} for clientId={}, op={}", topic, c.getClientId(), "CREATE_CARD_REQUEST");
+        } catch (Exception e) {
+            log.error("Failed to send event to topic {} for clientId={}, op={}: {}", topic, c.getClientId(), "CREATE_CARD_REQUEST", e.getMessage());
+        }
     }
 }
