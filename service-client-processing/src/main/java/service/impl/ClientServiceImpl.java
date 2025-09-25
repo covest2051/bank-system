@@ -1,6 +1,6 @@
 package service.impl;
 
-import dto.ClientEventDto;
+import dto.ClientEvent;
 import dto.ClientRequestDto;
 import dto.ClientResponseDto;
 import entity.Client;
@@ -106,7 +106,7 @@ public class ClientServiceImpl implements ClientService {
     private void sendEvent(Client c) {
         String topic = TOPIC_CLIENT_CARDS;
 
-        ClientEventDto event = ClientEventDto.builder()
+        ClientEvent event = ClientEvent.builder()
                 .eventType("CREATE_CARD_REQUEST")
                 .clientId(c.getId())
                 .firstName(c.getFirstName())

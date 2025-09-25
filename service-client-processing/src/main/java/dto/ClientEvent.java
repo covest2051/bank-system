@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ClientEventDto {
+public class ClientEvent {
     private String eventType;
     private Long clientId;
     private String firstName;
