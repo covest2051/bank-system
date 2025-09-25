@@ -36,7 +36,7 @@ public class Card {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private CardStatus paymentSystem;
+    private PaymentSystem paymentSystem;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)

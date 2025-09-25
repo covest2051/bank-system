@@ -42,6 +42,9 @@ public class ProductRegistry {
     @Column(nullable = false)
     private LocalDateTime openDate;
 
+    @Column(nullable = false)
+    private Integer monthCount;
+
     @PrePersist
     public void prePersist() {
         if (interestRate == null) {
@@ -49,6 +52,9 @@ public class ProductRegistry {
         }
         if (openDate == null) {
             openDate = LocalDateTime.now();
+        }
+        if (monthCount == null) {
+            monthCount = 0;
         }
 
     }
