@@ -12,7 +12,7 @@ import service.TransactionService;
 public class TransactionEventListener {
     private final TransactionService transactionService;
 
-    @KafkaListener(topics = "client_transactions", groupId = "transaction-service-group")
+    @KafkaListener(topics = "client_transactions")
     public void consume(TransactionEvent event) {
         log.info("Received transaction event: {}", event);
         try {

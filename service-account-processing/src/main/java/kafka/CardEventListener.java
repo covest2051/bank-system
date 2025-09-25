@@ -16,7 +16,7 @@ public class CardEventListener {
     private final AccountRepository accountRepository;
     private final CardService cardService;
 
-    @KafkaListener(topics = "client_cards", groupId = "card-service-group")
+    @KafkaListener(topics = "client_cards")
     public void consume(CardEvent event) {
         log.info("Received event: {}", event);
 
