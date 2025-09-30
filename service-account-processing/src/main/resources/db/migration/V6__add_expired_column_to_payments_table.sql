@@ -1,0 +1,1 @@
+ALTER TABLE payments ADD COLUMN expired boolean DEFAULT false NOT NULL;

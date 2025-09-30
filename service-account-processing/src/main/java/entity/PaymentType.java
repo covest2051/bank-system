@@ -1,5 +1,6 @@
 package entity;
 
 public enum PaymentType {
-    TRANSFER
+    TRANSFER,
+    CREDIT
 }

@@ -5,5 +5,6 @@ public enum TransactionStatus {
     PROCESSING,
     COMPLETE,
     BLOCKED,
-    CANCELLED
+    CANCELLED,
+    FREEZE
 }
