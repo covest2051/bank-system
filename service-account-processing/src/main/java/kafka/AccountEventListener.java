@@ -25,7 +25,6 @@ public class AccountEventListener {
                 log.info("Account for clientId={} already exists", event.getClientId());
                 return;
             }
-
             accountService.createAccount(event.getClientId());
             log.info("Account created for clientId={}", event.getClientId());
 

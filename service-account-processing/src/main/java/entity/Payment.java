@@ -51,6 +51,9 @@ public class Payment {
     @Column(nullable = false)
     private PaymentType type;
 
+    @Column(nullable = false)
+    private Boolean expired;
+
     @PrePersist
     public void prePersist() {
         if (paymentDate == null) {
