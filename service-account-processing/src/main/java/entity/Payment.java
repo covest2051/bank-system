@@ -17,6 +17,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "payments")
@@ -53,6 +54,9 @@ public class Payment {
 
     @Column(nullable = false)
     private Boolean expired;
+
+    @Column(name = "uuid", unique = true, updatable = false, nullable = false)
+    private UUID uuid;
 
     @PrePersist
     public void prePersist() {
