@@ -6,6 +6,7 @@ import entity.PaymentSystem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import repository.CardRepository;
 import service.CardService;
 
@@ -16,6 +17,7 @@ public class CardServiceImpl implements CardService {
     private final CardRepository cardRepository;
 
     @Override
+    @Transactional
     public Card createCard(Long accountId, PaymentSystem paymentSystem) {
         Card card = Card.builder()
                 .accountId(accountId)
