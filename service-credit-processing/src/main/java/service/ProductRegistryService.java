@@ -4,6 +4,7 @@ import entity.PaymentRegistry;
 import entity.ProductRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import repository.PaymentRegistryRepository;
 import repository.ProductRegistryRepository;
 
@@ -19,6 +20,7 @@ public class ProductRegistryService {
     private final ProductRegistryRepository productRegistryRepository;
     private final PaymentRegistryRepository paymentRegistryRepository;
 
+    @Transactional
     public ProductRegistry openProduct(Long clientId,
                                        Double interestRate,
                                        BigDecimal amount,

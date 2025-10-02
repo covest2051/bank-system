@@ -28,6 +28,7 @@ public class ClientProductServiceImpl implements ClientProductService {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Override
+    @Transactional
     public ClientProduct create(ClientProduct cp) {
         ClientProduct saved = clientProductRepository.save(cp);
 
@@ -36,6 +37,7 @@ public class ClientProductServiceImpl implements ClientProductService {
     }
 
     @Override
+    @Transactional
     public ClientProduct update(Long id, ClientProduct cp) {
         ClientProduct clientProductForUpdate = clientProductRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("ClientProduct not found: " + id));
@@ -50,6 +52,7 @@ public class ClientProductServiceImpl implements ClientProductService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         Optional<ClientProduct> clientProductForDelete = clientProductRepository.findById(id);
         if (clientProductForDelete.isPresent()) {

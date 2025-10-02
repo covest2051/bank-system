@@ -4,6 +4,7 @@ import entity.Account;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import repository.AccountRepository;
 import service.AccountService;
 
@@ -14,6 +15,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
 
     @Override
+    @Transactional
     public Account createAccount(Long clientId) {
         Account account = Account.builder()
                 .clientId(clientId)

@@ -6,6 +6,7 @@ import entity.ProductRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import repository.PaymentRegistryRepository;
 import repository.ProductRegistryRepository;
 
@@ -21,6 +22,7 @@ public class CreditDecisionService {
     private final PaymentRegistryRepository paymentRegistryRepository;
     private final ProductRegistryRepository productRegistryRepository;
 
+    @Transactional
     public Decision evaluate(Long clientId, BigDecimal requestedAmount) {
         List<ProductRegistry> existingProductRegistry = productRegistryRepository.findByClientId(clientId);
 

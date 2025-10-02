@@ -7,6 +7,7 @@ import entity.ProductType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import repository.ProductRepository;
 import service.ProductService;
 
@@ -20,6 +21,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
     @Override
+    @Transactional
     public ProductResponseDto createProduct(ProductRequestDto req) {
         productRepository.findByProductKey(req.getProductKey()).ifPresent(p -> {
             throw new IllegalArgumentException("Product key already exists");
@@ -48,6 +50,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductResponseDto updateProduct(Long id, ProductRequestDto req) {
         Product productForUpdate = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
 
@@ -60,6 +63,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public void deleteProduct(Long id) {
         if (!productRepository.existsById(id)) throw new RuntimeException("Product not found");
         productRepository.deleteById(id);
