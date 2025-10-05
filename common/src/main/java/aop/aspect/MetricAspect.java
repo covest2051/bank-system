@@ -2,13 +2,11 @@ package aop.aspect;
 
 import aop.kafka.KafkaProducerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -24,6 +22,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class MetricAspect {
     private final KafkaProducerService producerService;
     private final Environment environment;
@@ -34,11 +33,6 @@ public class MetricAspect {
 
     final String topic = "SERVICE_LOGS";
     private static final AtomicLong START_TIME = new AtomicLong();
-
-    public MetricAspect(KafkaProducerService producerService, Environment environment) {
-        this.producerService = producerService;
-        this.environment = environment;
-    }
 
     @Pointcut("@annotation(aop.annotation.Metric)")
     public void annotatedMethods() {
@@ -68,7 +62,7 @@ public class MetricAspect {
             long afterTime = System.currentTimeMillis();
             long durationMs = afterTime - beforeTime;
 
-            if(durationMs > methodLimitDuration) {
+            if (durationMs > methodLimitDuration) {
                 sendExecutionTimeToKafka(pJoinPoint, durationMs);
             }
 
