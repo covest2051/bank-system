@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "transactions")
@@ -24,8 +26,9 @@ public class Transaction {
 
     private Long cardId;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String type;
+    private TransactionType type;
 
     @Column(nullable = false)
     private BigDecimal amount;
@@ -36,6 +39,9 @@ public class Transaction {
 
     @Column(nullable = false)
     private LocalDateTime timestamp;
+
+    @Column(name = "event_uuid", unique = true)
+    private UUID eventUuid;
 
     @PrePersist
     public void prePersist() {
