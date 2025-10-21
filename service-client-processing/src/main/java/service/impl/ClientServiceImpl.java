@@ -37,6 +37,7 @@ public class ClientServiceImpl implements ClientService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
     public List<ClientResponseDto> registerClients(List<Client> clients) {
         return clients.stream()
                 .map(client -> {
@@ -47,6 +48,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    @Transactional
     public ClientResponseDto registerClient(ClientRequestDto req) {
         DocumentType docType = req.getDocumentType();
         String docId = String.valueOf(req.getDocumentId());
