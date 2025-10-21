@@ -1,13 +1,17 @@
 package service.impl;
 
+import aop.repository.RoleRepository;
 import dto.ClientEvent;
 import dto.ClientRequestDto;
 import dto.ClientResponseDto;
 import entity.Client;
 import entity.DocumentType;
+import entity.Role;
+import entity.RoleEnum;
 import entity.User;
 import exception.BlacklistedException;
 import exception.ClientAlreadyExistsException;
+import exception.UserBlacklistedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -21,6 +25,7 @@ import service.ClientService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +39,7 @@ public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
     private final UserRepository userRepository;
     private final BlacklistRegistryRepository blacklistRegistryRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -53,10 +59,21 @@ public class ClientServiceImpl implements ClientService {
         DocumentType docType = req.getDocumentType();
         String docId = String.valueOf(req.getDocumentId());
 
+        User user = new User();
+
         boolean blacklisted = blacklistRegistryRepository.existsActiveByDocumentTypeAndDocumentId(String.valueOf(docType), docId);
         if (blacklisted) {
-            throw new BlacklistedException("Client with document " + docType + ":" + docId + " is in black list");
+            Role blockedRole = roleRepository.findByName(RoleEnum.BLOCKED_CLIENT)
+                    .orElseGet(() -> roleRepository.save(new Role(RoleEnum.BLOCKED_CLIENT)));
+
+            user.setRoles(Set.of(blockedRole));
+            userRepository.save(user);
+
+            throw new UserBlacklistedException("User is blacklisted");
         }
+        Role currentClientRole = roleRepository.findByName(RoleEnum.CURRENT_CLIENT)
+                .orElseGet(() -> roleRepository.save(new Role(RoleEnum.CURRENT_CLIENT)));
+
         Optional<Client> existingClientOpt = clientRepository.findByDocumentTypeAndDocumentId(docType, docId);
         if (existingClientOpt.isPresent()) {
             throw new ClientAlreadyExistsException("Client is already registered");
@@ -77,10 +94,11 @@ public class ClientServiceImpl implements ClientService {
             throw new ClientAlreadyExistsException("User with this email already exists");
         });
 
-        User user = User.builder()
+        user = User.builder()
                 .login(req.getEmail())
                 .email(req.getEmail())
                 .password(passwordEncoder.encode(req.getPassword()))
+                .roles(Set.of(currentClientRole))
                 .build();
         User savedUser = userRepository.save(user);
 
